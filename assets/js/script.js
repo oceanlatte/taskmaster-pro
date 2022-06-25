@@ -3,13 +3,22 @@ var tasks = {};
 var createTask = function (taskText, taskDate, taskList) {
   // create elements that make up a task item
   var taskLi = $("<li>").addClass("list-group-item");
+
   var taskSpan = $("<span>")
     .addClass("badge badge-primary badge-pill")
-    .text(taskDate);
-  var taskP = $("<p>").addClass("m-1").text(taskText);
+    .text(taskDate)
+  ;
+
+  var taskP = $("<p>")
+    .addClass("m-1")
+    .text(taskText)
+  ;
 
   // append span and p element to parent li
   taskLi.append(taskSpan, taskP);
+
+  // check due date
+  aduitTask(taskLi);
 
   // append to ul list on the page
   $("#list-" + taskList).append(taskLi);
@@ -39,6 +48,27 @@ var loadTasks = function () {
 
 var saveTasks = function () {
   localStorage.setItem("tasks", JSON.stringify(tasks));
+};
+
+var aduitTask = function(taskEl) {
+  // get date from task element
+  var date = $(taskEl).find("span").text().trim();
+
+  // convert to moment object at 5:00 PM
+  var time = moment(date, "L").set("hour", 17);
+  // this should print out an object for the value of the date variable 
+  // but at 5:00pm of that date. The "L" is for local time
+
+  // remove any old classes from element
+  $(taskEl).removeClass("list-group-item-warning list-group-item-danger");
+
+  // apply new classes if task is near/over due
+  if (moment().isAfter(time)){
+    $(taskEl).addClass("list-group-item-danger");
+  }
+  else if (Math.abs(moment().diff(time, "days")) <= 2) {
+    $(taskEl).addClass("list-group-item-warning");
+  }
 };
 
 // edit task on click
@@ -103,7 +133,7 @@ $(".list-group").on("click", "span", function () {
 //value of due date was changed
 $(".list-group").on("change", "input[type='text']", function () {
   //get current text
-  var date = $(this).val().trim();
+  var date = $(this).val();
 
   // get the parent ul's id attribue
   var status = $(this).closest(".list-group").attr("id").replace("list-", "");
@@ -122,6 +152,9 @@ $(".list-group").on("change", "input[type='text']", function () {
 
   //replace input with span element
   $(this).replaceWith(taskSpan);
+
+  // Pass task's <li> element into auditTask() to check new due date
+  aduitTask($(taskSpan).closest(".list-group-item"));
 });
 
 // jQuery Selector for all list-group elements
