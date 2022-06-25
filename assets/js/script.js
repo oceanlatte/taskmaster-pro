@@ -173,9 +173,11 @@ $(".card .list-group").sortable({
   helper: "clone:",
   activate: function (event) {
     $(this).addClass("dropover");
+    $(".bottom-trash").addClass("bottom-trash-drag");
   },
   deactivate: function (event) {
     $(this).removeClass("dropover");
+    $(".bottom-trash").removeClass("bottom-trash-drag");
   },
   over: function (event) {
     $(event.target).addClass("dropover-active");
@@ -220,10 +222,10 @@ $("#trash").droppable({
     // don't need to call saveTasks(); bc the update function will trigger automatically
   },
   over: function(event, ui) {
-    console.log("over");
+    $(".bottom-trash").addClass("bottom-trash-active");
   },
   out: function(event, ui) {
-    console.log("out");
+    $(".bottom-trash").removeClass("bottom-trash-active");
   }
 });
 
