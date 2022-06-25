@@ -1,5 +1,13 @@
 var tasks = {};
 
+setInterval(function() {
+  $(".card .list-group-item").each(function(index, el) {
+    aduitTask(el);
+  });
+  //multiply 1,000 milliseconds by 60 to convert it to 1 minute
+  //Then multiply that minute by 60 to get a 60-minute timer
+}, (1000 * 60) * 60);
+
 var createTask = function (taskText, taskDate, taskList) {
   // create elements that make up a task item
   var taskLi = $("<li>").addClass("list-group-item");
